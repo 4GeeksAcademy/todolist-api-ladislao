@@ -1,10 +1,14 @@
-import React from "react";
+import React,{ useEffect } from "react";
 
-//include images into your bundle
 import rigoImage from "../../img/rigo-baby.jpg";
+import { getTodoList } from "./apiServices"
 
 //create your first component
 const Home = () => {
+	useEffect(() => {
+		getTodoList()
+	}, [])
+
 	return (
 		<div className="text-center">
             
