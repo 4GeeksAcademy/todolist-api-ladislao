@@ -1,84 +1,62 @@
-const baseUrlUsers = "https://playground.4geeks.com/todo/users/";
+const BASE_URL = "https://playground.4geeks.com/todo";
 
-const baseUrlTodo = "https://playground.4geeks.com/todo/";
+export const getTodoList = async (username) => {
+  const res = await fetch(`${BASE_URL}/users/${username}`);
+  const data = await res.json();
+  if (!res.ok) throw data;
 
-
-export const createUser = async () => {
-    try {
-        const request = await fetch(`${baseUrlUsers}IsNoobDoog`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({})
-        });
-        const response = await request.json();
-        return response;
-    } catch (error) {
-        console.error("Error en createUser:", error);
-        throw new Error(error);
-    }
+  return Array.isArray(data.todos) ? data.todos : [];
 };
 
-export const getTodoList = async () => {
-    try {
-        const request = await fetch(`${baseUrlUsers}IsNoobDoog`)
-        const response = await request.json();
-        console.log(response);
 
-        return response.todos;
-
-
-    }
-    catch (error) {
-        console.log();
-
-    }
+export const createUser = async (username) => {
+  const res = await fetch(`${BASE_URL}/users/${username}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify([]),
+  });
+  return res.json();
 };
 
-export const createPost = async (post) => {
-    try {
-        const request = await fetch(`${baseUrlTodo}/post/IsNoobDoog`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(post)
-        });
-        const response = await request.json();
-        return response;
-    } catch (error) {
-        console.error("Error en createPost:", error);
-    }
+
+export const createPost = async (username, task) => {
+  try {
+    const res = await fetch(`${BASE_URL}/todos/${username}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(task),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw data;
+
+    return data;
+  } catch (error) {
+    console.error("Error en createPost:", error);
+    throw error;
+  }
 };
 
-export const deletePost = async (postId) => {
-    try {
-        const request = await fetch(`${baseUrlTodo}/todos/${postId}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-        const response = await request.json();
-        return response;
-    } catch (error) {
-        console.error("Error en deletePost:", error);
-    }
-};
+export const deletePost = async (taskId) => {
+    const res = await fetch(`https://playground.4geeks.com/todo/todos/${taskId}`, {
+      method: "DELETE",
+    });
+  
+    if (!res.ok) {
+      let errorMsg = "No se pudo eliminar";
+      try {
+        const data = await res.json();
+        errorMsg = data.detail || errorMsg;
+      } catch (e) {
 
-export const refreshPost = async (postId, updatedPost) => {
-    try {
-        const request = await fetch(`${baseUrlTodo}/todos/${postId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(updatedPost)
-        });
-        const response = await request.json();
-        return response;
-    } catch (error) {
-        console.error("Error en refreshPost:", error);
+      }
+      console.error("Error al eliminar tarea:", errorMsg);
+      throw new Error(errorMsg);
     }
+  };
+  
+
+export const getUserList = async () => {
+  const res = await fetch(`${BASE_URL}/users`);
+  return res.json();
 };
