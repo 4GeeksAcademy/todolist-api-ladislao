@@ -32,8 +32,15 @@ const TodoList = () => {
   const handleUserConfirm = async () => {
     if (!username.trim()) return;
     setLoading(true);
-    await fetchUserTasks(username);
-    setConfirmedUser(username);
+    
+    try {
+      await createUser(username); 
+      await fetchUserTasks(username);
+      setConfirmedUser(username);
+    } catch (err) {
+      console.error("Error creando usuario:", err);
+    }
+  
     setLoading(false);
   };
 
